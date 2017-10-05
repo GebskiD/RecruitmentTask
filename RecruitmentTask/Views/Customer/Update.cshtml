@@ -1,0 +1,15 @@
+﻿@model RecruitmentTask.Models.Customer
+
+@{
+    ViewBag.Title = "Update";
+}
+
+<p>@Html.Raw(TempData["message"])</p>
+
+@using (Html.BeginForm("Update", "Customer", FormMethod.Post, new {@class = "customerForm" }))
+{
+    @Html.HiddenFor(m => m.Id)
+    @Html.Partial("_CustomerForm", Model)
+}
+
+

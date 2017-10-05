@@ -1,0 +1,91 @@
+﻿@model IEnumerable<RecruitmentTask.Models.Customer>
+@{
+    ViewBag.Title = "CustomersData";
+}
+
+<div class="container">
+    <table class="table table-striped CustTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Address</th>
+                <th>Telephone</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => item.Name)</td>
+                <td>@Html.DisplayFor(m => item.Surname)</td>
+                <td>@Html.DisplayFor(m => item.Address)</td>
+                <td>@Html.DisplayFor(m => item.Telephone)</td>
+                <td>@Html.ActionLink("Delete", "RemoveCustomer", "Customer", new { Id = item.Id}, new { @class = "btn btn-info btn-sm" })</td>
+                <td><button Id = "@item.Id" class="btn btn-info btn-sm CustomerEdit">Edit</button></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<div id="dialog-edit" style="display: none">
+</div>
+
+<script src="~/Scripts/jquery-1.12.4.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+
+<script>
+    $(".CustomerEdit").on("click", function () {
+
+        var customerId = $(this).attr('Id');
+        var url = '@Url.Action("Update", "Customer", new {Id = "replace"})';
+        var urlComplete = url.replace("replace", customerId)
+
+        $("#dialog-edit").dialog({
+            title: 'Edit Customer',
+            autoOpen: false,
+            resizable: false,
+            height: 455,
+            width: 550,
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            buttons: [
+              {
+                  text: "Update",
+                  icon: "ui-icon-heart",
+                  type:"submit",
+                  click: function () {
+                      $.ajax({
+                          url: "Update",
+                          type: "POST",
+                          data: $(this).find(".customerForm").serialize(),
+                          success: function (objResponse)
+                          {
+                              if (objResponse.success) {
+                                  $("#dialog-edit").load(urlComplete)
+                              }
+                              else {
+                                  $("#dialog-edit").dialog('close')
+                                  location.reload();
+                              }
+                          }
+                      });
+                  }}
+            ],
+            open: function (event, ui) {
+                $(this).load(urlComplete)
+            },
+            close: function (event, ui) {
+                $(this).dialog('close');
+            }
+        });
+
+        $("#dialog-edit").dialog('open');
+        return false;
+        });
+
+
+</script>
